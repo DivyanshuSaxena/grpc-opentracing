@@ -230,6 +230,10 @@ func injectSpanContext(ctx context.Context, tracer opentracing.Tracer, clientSpa
 	} else {
 		md = md.Copy()
 	}
+
+	// Add trace id to metadata
+	md = md.Set("request-id", "check")
+
 	mdWriter := metadataReaderWriter{md}
 	err := tracer.Inject(clientSpan.Context(), opentracing.HTTPHeaders, mdWriter)
 	// We have no better place to record an error than the Span itself :-/
@@ -238,7 +242,7 @@ func injectSpanContext(ctx context.Context, tracer opentracing.Tracer, clientSpa
 	}
 
 	// Add request id to metadata
-	ctx = metadata.AppendToOutgoingContext(ctx, "request-id", "trial")
+	// ctx = metadata.AppendToOutgoingContext(ctx, "request-id", "trial")
 
 	return metadata.NewOutgoingContext(ctx, md)
 }
